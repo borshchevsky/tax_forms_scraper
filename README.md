@@ -26,7 +26,7 @@ Create an object:
 scraper = TaxFormScraper()
 ```
 
-Take a list of tax form names with years ranges:
+Returns a list of tax form names with years ranges:
 - **search_forms** - returns json with the information:
 
 
