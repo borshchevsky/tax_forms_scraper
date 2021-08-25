@@ -69,7 +69,7 @@ scraper.save_json(["Form 4563", "Form 8911", "Publ 1693"])
 
 Download particular form for a particular period of years to a specified subdirectory under your script's
 main directory:
-- **download_forms**
+- **download_forms**:
 
 ```sh
 scraper.download_forms('form name', 2018, 2021)
