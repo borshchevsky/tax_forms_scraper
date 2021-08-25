@@ -6,7 +6,7 @@ or downloads forms in PDF-format.
 
 ## Tech
 
-- Python v3.8
+- Python v3.8.2
 - BeautifulSoup 4
 - asyncio
 - aiohttp
