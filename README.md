@@ -69,12 +69,12 @@ returns:
 main directory add -f option:
 
 ```sh
-python main.py search "Form 4563" "Form 8911" "Publ 1693" -f
+python main.py search "form 4563" "form 8911" "publ 1693" -f
 ```
 
-- to download a particular form for a particular years period to "forms/" subdirectory:
+- to download a particular form for a 2001-2015 years period to "forms/" subdirectory:
 
 
 ```sh
-python main.py download "Form 4563"
+python main.py download "form w-2" 2001 2015
 ```
