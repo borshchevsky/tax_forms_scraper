@@ -1,8 +1,8 @@
 # Tax Forms Scraper
 
-Taking a list of tax form names (ex: "Form W-2", "Form 1095-C"), search the
+Taking a list of tax form names (ex: "Form W-2", "Form 1095-C"), search the www.irs.gov
 website and returns the information about years range for each particular form,
-or downloads forms in PDF-format.
+or downloads forms in PDF format.
 
 ## Tech
 
@@ -13,25 +13,30 @@ or downloads forms in PDF-format.
 
 ## Installation
 
+Create a virtual environment:
+
+```sh
+python3 -m venv venv
+```
+
+Run the virtual environment:
+
+```sh
+source venv/bin/activate
+```
+
 Install the dependencies.
 ```sh
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
 
-Create an object:
+### Under you script's directory type:
+- to return a list of tax form names with years ranges (form names must be enclosed in quotes and divided by spaces):
 
 ```sh
-scraper = TaxFormScraper()
-```
-
-Returns a list of tax form names with years ranges:
-- **search_forms** - returns json with the information:
-
-
-```sh
-scraper.search_forms(["Form 4563", "Form 8911", "Publ 1693"])
+python main.py search "Form 4563" "Form 8911" "Publ 1693"
 ```
 
 returns:
@@ -60,17 +65,17 @@ returns:
 
 ```
 
-- **save_json** - saves json with the information to the file "forms.json" to a directory under your script's
-main directory:
+- to save the information to the file "forms.json" to the directory under your script's
+main directory add -f option:
 
 ```sh
-scraper.save_json(["Form 4563", "Form 8911", "Publ 1693"])
+python main.py search "Form 4563" "Form 8911" "Publ 1693" -f
 ```
 
-Download particular form for a particular period of years to a specified subdirectory under your script's
+- to download a particular form for a particular years period to a specified subdirectory under your script's
 main directory:
-- **download_forms**:
+
 
 ```sh
-scraper.download_forms('form name', 2018, 2021)
+python main.py download "Form 4563"
 ```
