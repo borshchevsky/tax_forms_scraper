@@ -12,7 +12,7 @@ def validate_form_names(ctx, param, value):
     return value
 
 
-def validate_int(ctx, param, value):
+def validate_year(ctx, param, value):
     try:
         value = int(value)
         if value < 1800:
@@ -41,8 +41,8 @@ def search(forms, f):
 
 @main.command(help="Download forms in PDF.")
 @click.argument('form')
-@click.argument('year_start', callback=validate_int)
-@click.argument('year_end', callback=validate_int)
+@click.argument('year_start', callback=validate_year)
+@click.argument('year_end', callback=validate_year)
 def download(form, year_start, year_end):
     asyncio.run(scraper.download_forms(form, year_start, year_end))
 
