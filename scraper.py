@@ -25,7 +25,6 @@ class TaxFormsScraper:
         forms = set(forms)
         raw_data = await self.process(forms)
         data = await self.get_data(raw_data)
-
         if data:
             return await self.make_json(data)
         logger.info(' Nothing found.')
@@ -86,7 +85,6 @@ class TaxFormsScraper:
     async def parse_data(form, content):
         if not content:
             return None
-
         years = []
         title = None
         for item in content:
