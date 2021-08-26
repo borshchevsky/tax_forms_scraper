@@ -72,8 +72,7 @@ main directory add -f option:
 python main.py search "Form 4563" "Form 8911" "Publ 1693" -f
 ```
 
-- to download a particular form for a particular years period to a specified subdirectory under your script's
-main directory:
+- to download a particular form for a particular years period to "forms/" subdirectory:
 
 
 ```sh
