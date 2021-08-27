@@ -21,7 +21,7 @@ logger = logging.getLogger('IRS scraper')
 
 
 class TaxFormsScraper:
-    async def search_forms(self, forms: list) -> str:
+    async def search_forms(self, forms):
         forms = set(forms)
         raw_data = await self.process(forms)
         data = await self.get_data(raw_data)
@@ -66,25 +66,24 @@ class TaxFormsScraper:
             async with session.get(url) as response:
                 return await response.read()
 
-    async def get_data(self, data, year_start: int = 0, year_end: int = 0):
+    async def get_data(self, data, year_start=0, year_end=0):
         if not data:
             return
         output = []
         for form, content in sorted(data):
-            parsed_data = await self.parse_data(form, content)
-
+            form, parsed_data = await self.parse_data(form, content)
             if year_start and year_end and parsed_data:
                 years = list(filter(lambda x: year_start <= int(x['year']) <= year_end, parsed_data['years']))
                 del parsed_data['years']
                 parsed_data.update({'years': years})
-
             output.append({form: parsed_data})
         return output
 
     async def parse_data(self, form, content):
         if not content:
-            return None
+            return form, None
         years = []
+        exact_form_name = None
         title = None
         for item in content:
             parser = await self.get_parser(item)
@@ -94,6 +93,7 @@ class TaxFormsScraper:
                 form_name = a_tag.text
                 if form_name.lower() != form:
                     continue
+                exact_form_name = a_tag.text
                 download_link = a_tag['href']
                 title = row.find('td', class_='MiddleCellSpacer').text.strip()
                 year = row.find('td', class_='EndCellSpacer').text.strip()
@@ -101,7 +101,9 @@ class TaxFormsScraper:
                     'year': year,
                     'download_link': download_link
                 })
-        return {'title': title, 'years': years} if title else None
+        if not title:
+            return form, None
+        return exact_form_name, {'title': title, 'years': years}
 
     @staticmethod
     async def get_parser(html):
@@ -113,11 +115,11 @@ class TaxFormsScraper:
         for item in data:
             for form, content in item.items():
                 if not content:
-                    item = {form.capitalize(): 'not found'}
+                    item = {form: 'not found'}
                 else:
                     years = set(map(lambda x: int(x['year']), content['years']))
                     item = {
-                        'form_number': form.capitalize(),
+                        'form_number': form,
                         'form_title': content['title'],
                         'min_year': min(years),
                         'max_year': max(years)
@@ -125,13 +127,13 @@ class TaxFormsScraper:
                 json_dict.append(item)
         return json.dumps(json_dict, indent=4)
 
-    async def download_forms(self, form: str, year_start: int, year_end: int):
+    async def download_forms(self, form, year_start, year_end):
         year_start, year_end = await self.validate_years(year_start, year_end)
         raw_data = await self.process([form])
         data = await self.get_data(raw_data, year_start, year_end)
         if data:
             _, downloaded = await self.get_forms(data[0])
-            logger.info(f' {downloaded} forms were downloaded.')
+            logger.info(f' {downloaded} documents were downloaded.')
 
     @staticmethod
     async def validate_years(year_start, year_end):
@@ -144,7 +146,7 @@ class TaxFormsScraper:
             raise Exception('Invalid years values.')
         return year_start, year_end
 
-    async def get_forms(self, data: dict):
+    async def get_forms(self, data):
         form, content = tuple(*data.items())
 
         if not content:
@@ -166,4 +168,4 @@ class TaxFormsScraper:
         if data:
             with open('forms.json', 'w') as file:
                 file.write(data)
-                logger.info(' Saved to "forms.json"')
+                logger.info(' The information saved to "forms.json"')
