@@ -36,7 +36,7 @@ pip install -r requirements.txt
 - to return a list of tax form names with years ranges (form names must be enclosed in quotes and divided by spaces):
 
 ```sh
-python main.py search "Form 4563" "Form 8911" "Publ 1693"
+python main.py search "form 4563" "form 8911" "publ 1693"
 ```
 
 returns:

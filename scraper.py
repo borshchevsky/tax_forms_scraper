@@ -42,7 +42,7 @@ class TaxFormsScraper:
         return form, await self.get_content(url)
 
     async def process_search_results(self, form, search_results):
-        parser = BeautifulSoup(search_results, 'html.parser')
+        parser = await self.get_parser(search_results)
 
         try:
             pages_count = int(parser.find('th', class_='ShowByColumn').text.split()[-2].replace(',', '')) // 200 + 1
@@ -81,14 +81,13 @@ class TaxFormsScraper:
             output.append({form: parsed_data})
         return output
 
-    @staticmethod
-    async def parse_data(form, content):
+    async def parse_data(self, form, content):
         if not content:
             return None
         years = []
         title = None
         for item in content:
-            parser = BeautifulSoup(item, 'html.parser')
+            parser = await self.get_parser(item)
             rows = parser.find_all(['tr'], class_=['even', 'odd'])
             for row in rows:
                 a_tag = row.find('a')
@@ -103,6 +102,10 @@ class TaxFormsScraper:
                     'download_link': download_link
                 })
         return {'title': title, 'years': years} if title else None
+
+    @staticmethod
+    async def get_parser(html):
+        return BeautifulSoup(html, 'html.parser')
 
     @staticmethod
     async def make_json(data):
