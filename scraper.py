@@ -132,7 +132,7 @@ class TaxFormsScraper:
         raw_data = await self.process([form])
         data = await self.get_data(raw_data, year_start, year_end)
         if data:
-            _, downloaded = await self.get_forms(data[0])
+            downloaded = await self.get_forms(data[0])
             logger.info(f' {downloaded} documents were downloaded.')
 
     @staticmethod
@@ -150,10 +150,11 @@ class TaxFormsScraper:
         form, content = tuple(*data.items())
 
         if not content:
-            return None, 0
+            return 0
 
         tasks = [self.download_form(form, item['year'], item['download_link']) for item in content['years']]
-        return await asyncio.gather(*tasks), len(tasks)
+        await asyncio.gather(*tasks)
+        return len(tasks)
 
     async def download_form(self, form, year, url):
         filename = f'{form.capitalize()} - {year}.pdf'
